@@ -8,16 +8,35 @@ country_code="PT"
 
 # Add your API key to the request URL
 api_key = "ac61c74efb010f40494a5638becde9ce"
-responseCoords = requests.get(f"http://api.openweathermap.org/geo/1.0/zip?zip={zip_code},{country_code}&appid={api_key}")
-coords=responseCoords.json()
-lat = coords['lat']
-lon = coords['lon']
+
+
+
+sd = datetime(2023, 1, 1, 0, 0, 0)
+
+# Convert to UTC
+utc_sd = sd.astimezone(timezone.utc)
+
+ed = datetime(2023, 5, 5, 0, 0, 0)
+
+# Convert to UTC
+utc_ed = ed.astimezone(timezone.utc)
+
+# Convert to UTC epoch (seconds since epoch)
+sd_epoch = int(utc_sd.timestamp())
+ed_epoch = int(utc_ed.timestamp())
+
+
+lat = "41.5630"
+lon = "-8.3933"
 data = []
 
-end = 1680645600
-for start in [1678838400,1679446800,1680055200]:
-    url = f"https://history.openweathermap.org/data/2.5/history/city?lat={lat}&lon={lon}&type=hour&start={start}&end={end}&appid={api_key}"
-    # Send the GET request
+start = 1678820000
+end = 1680650000
+
+dataPoints = (end-start)//3600
+for i in range(0,dataPoints,99):
+    url = f"https://history.openweathermap.org/data/2.5/history/city?id=2742032&type=hour&start={start+i*3600}&cnt=99&appid={api_key}"
+    # Send the GET request10000
     response = requests.get(url)
 
     data += response.json()['list']
